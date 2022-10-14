@@ -2,6 +2,7 @@
 using la_mia_pizzeria_static.MyDbContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace la_mia_pizzeria_static.Controllers.ApiController
 {
@@ -16,10 +17,33 @@ namespace la_mia_pizzeria_static.Controllers.ApiController
             _pizzeria_db = new Pizzeria();
         }
 
+        [HttpGet]
         public IActionResult Get()
         {
-            List<PizzaModel> pizzaList = _pizzeria_db.Pizzas.ToList();
+            List<PizzaModel> pizzaList = new List<PizzaModel>();
             //List<PizzaModel> pizzaList = new List<PizzaModel>();
+            return Ok(pizzaList);
+        }
+
+        [HttpGet]
+        public IActionResult GetAllData()
+        {
+            List<PizzaModel> pizzaList;
+            using (Pizzeria ctx = new Pizzeria())
+            {
+                pizzaList = ctx.Pizzas.ToList();
+            }
+            foreach(PizzaModel pizza in pizzaList)
+            {
+                using (Pizzeria ctx = new Pizzeria())
+                {
+                    pizza.Category = ctx.Categories.Where(x => x.Id == pizza.CategoryId).FirstOrDefault();
+                }
+                using (Pizzeria ctx = new Pizzeria())
+                {
+                    pizza.Ingredients = ctx.Ingredients.FromSqlRaw($"SELECT DISTINCT i.Id, i.Name FROM Ingredients as i INNER JOIN IngredientModelPizzaModel as ingp ON ingp.IngredientsId = i.Id INNER JOIN Pizzas as p ON ingp.PizzasId = {pizza.Id}").ToList();
+                }
+            }
             return Ok(pizzaList);
         }
     }

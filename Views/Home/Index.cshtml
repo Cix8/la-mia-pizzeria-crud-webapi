@@ -9,7 +9,7 @@
 </div>
 
 <script type="text/javascript">
-    axios.get("/api/pizza/get")
+    axios.get("/api/pizza/getalldata")
         .then((resp) => {
             console.log(resp.data);
             const listContainer = document.getElementById("content-container")
@@ -33,10 +33,25 @@
                     cardTitle.setAttribute("class", "card-title");
                     const cardPrice = document.createElement("span");
                     cardPrice.setAttribute("class", "d-block");
+                    const cardCategory = document.createElement("span");
+                    cardCategory.setAttribute("class", "d-block pb-3");
+                    const cardIngredients = document.createElement("span");
+                    cardIngredients.setAttribute("class", "d-block pb-3");
                     cardTitle.innerHTML += `Pizza ${item.name}`;
                     cardPrice.innerHTML += `Prezzo: € ${item.price}`;
+                    cardCategory.innerHTML += `Categoria: ${item.category.name}`;
+                    cardIngredients.innerHTML += "Ingredienti: ";
+                    item.ingredients.forEach((ing, index) => {
+                        if(index != (item.ingredients.length - 1)) {
+                            cardIngredients.innerHTML += `${ing.name[0].toUpperCase()}${ing.name.slice(1)}, `;
+                        } else {
+                            cardIngredients.innerHTML += `${ing.name[0].toUpperCase()}${ing.name.slice(1)}`;
+                        }
+                    })
                     listItem.append(cardImg);
                     cardBody.append(cardTitle);
+                    cardBody.append(cardCategory);
+                    cardBody.append(cardIngredients);
                     cardBody.append(cardPrice);
                     listItem.append(cardBody);
                     list.append(listItem);
