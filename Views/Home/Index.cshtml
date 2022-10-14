@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "ApiIndex";
+}
+
+<h1 class="text-center py-4">Le nostre ApiPizze</h1>
+
+<div class="container-fluid" id="content-container">
+
+</div>
+
+<script type="text/javascript">
+    axios.get("/api/pizza/get")
+        .then((resp) => {
+            console.log(resp.data);
+            const listContainer = document.getElementById("content-container")
+            if(resp.data.length != 0) {
+                const list = document.createElement("ul");
+                list.setAttribute("class", "list-group flex-row flex-wrap ms-5");
+                const pizzaList = resp.data;
+                pizzaList.forEach(item => {
+                    const listItem = document.createElement("li");
+                    listItem.setAttribute("class", "card my-3 me-3 my_card");
+                    const cardBody = document.createElement("div");
+                    cardBody.setAttribute("class", "card-body");
+                    const cardTitle = document.createElement("h2");
+                    cardTitle.setAttribute("class", "card-title");
+                    const cardPrice = document.createElement("span");
+                    cardPrice.setAttribute("class", "d-block");
+                    cardTitle.innerHTML += `Pizza ${item.name}`;
+                    cardPrice.innerHTML += `Prezzo: € ${item.price}`;
+                    cardBody.append(cardTitle);
+                    cardBody.append(cardPrice);
+                    listItem.append(cardBody);
+                    list.append(listItem);
+                })
+                listContainer.append(list);
+            } else {
+                const empty = document.createElement("h2");
+                empty.setAttribute("class", "text-center");
+                empty.innerHTML += "Non è disponibile nessuna pizza attualmente";
+                listContainer.append(empty);
+            }
+        })
+        .catch((e) => {
+            console.log(e);
+        })
+</script>
