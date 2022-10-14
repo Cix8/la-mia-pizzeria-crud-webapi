@@ -20,6 +20,13 @@
                 pizzaList.forEach(item => {
                     const listItem = document.createElement("li");
                     listItem.setAttribute("class", "card my-3 me-3 my_card");
+                    const cardImg = document.createElement("img");
+                    if(item.image.includes("data:image") || item.image.includes("http")) {
+                        cardImg.setAttribute("src", item.image);
+                    } else {
+                        cardImg.setAttribute("src", `/img/${item.image}`);
+                    }
+                    cardImg.setAttribute("class", "card-img-top my_img_top");
                     const cardBody = document.createElement("div");
                     cardBody.setAttribute("class", "card-body");
                     const cardTitle = document.createElement("h2");
@@ -28,6 +35,7 @@
                     cardPrice.setAttribute("class", "d-block");
                     cardTitle.innerHTML += `Pizza ${item.name}`;
                     cardPrice.innerHTML += `Prezzo: € ${item.price}`;
+                    listItem.append(cardImg);
                     cardBody.append(cardTitle);
                     cardBody.append(cardPrice);
                     listItem.append(cardBody);

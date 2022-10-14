@@ -20,3 +20,7 @@ body {
 .my_card {
     width: 25rem!important;
 }
+
+.my_img_top {
+    height: 15rem !important;
+}
