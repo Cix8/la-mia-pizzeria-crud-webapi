@@ -20,7 +20,7 @@ namespace la_mia_pizzeria_static.Controllers.ApiController
         [HttpGet]
         public IActionResult Get()
         {
-            List<PizzaModel> pizzaList = new List<PizzaModel>();
+            List<PizzaModel> pizzaList = _pizzeria_db.Pizzas.ToList();
             //List<PizzaModel> pizzaList = new List<PizzaModel>();
             return Ok(pizzaList);
         }
