@@ -31,5 +31,14 @@ namespace la_mia_pizzeria_static.Controllers.ApiController
             //List<PizzaModel> pizzaList = new List<PizzaModel>();
             return Ok(pizzaList);
         }
+
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            PizzaModel thisPizza = _pizzeria_db.Pizzas.Where(pizza => pizza.Id == id).Include("Category").Include("Ingredients").First();
+            return Ok(thisPizza);
+            //return NotFound();
+        }
     }
 }

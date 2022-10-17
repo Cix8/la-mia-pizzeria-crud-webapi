@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "ApiDetails";
+}
+
+<h1 id="title" class="text-center py-4">La nostra Pizza </h1>
+
+<div class="container-fluid d-flex justify-content-center" id="content-container">
+
+</div>
+
+<script type="text/javascript">
+
+    debugger;
+    const currentUrl = window.location.href;
+    const urlArray = currentUrl.split("/");
+    const thisId = urlArray[urlArray.length - 1];
+    
+    callServer(thisId);
+
+    function callServer(id) {
+        axios.get("/api/pizza/details", {
+            params: {
+                id: id
+            }
+        })
+            .then((resp) => {
+                console.log(resp.data);
+                const contentContainer = document.getElementById("content-container");
+                contentContainer.innerHTML = "";
+                const thisPizza = resp.data;
+                const title = document.getElementById("title");
+                title.innerHTML += thisPizza.name;
+                const contItem = document.createElement("div");
+                contItem.setAttribute("class", "card my-3 me-3 my_card");
+                const cardImg = document.createElement("img");
+                if (thisPizza.image.includes("data:image") || thisPizza.image.includes("http")) {
+                    cardImg.setAttribute("src", thisPizza.image);
+                } else {
+                    cardImg.setAttribute("src", `/img/${thisPizza.image}`);
+                }
+                cardImg.setAttribute("class", "card-img-top my_img_top");
+                const cardBody = document.createElement("div");
+                cardBody.setAttribute("class", "card-body");
+                const cardTitle = document.createElement("h2");
+                cardTitle.setAttribute("class", "card-title");
+                const cardPrice = document.createElement("span");
+                cardPrice.setAttribute("class", "d-block");
+                cardTitle.innerHTML += `Pizza ${thisPizza.name}`;
+                cardPrice.innerHTML += `Prezzo: € ${thisPizza.price}`;
+                contItem.append(cardImg);
+                cardBody.append(cardTitle);
+                if (thisPizza.category && thisPizza.ingredients) {
+                    const cardCategory = document.createElement("span");
+                    cardCategory.setAttribute("class", "d-block pb-3");
+                    const cardIngredients = document.createElement("span");
+                    cardIngredients.setAttribute("class", "d-block pb-3");
+                    cardCategory.innerHTML += `Categoria: ${thisPizza.category.name}`;
+                    cardIngredients.innerHTML += "Ingredienti: ";
+                    thisPizza.ingredients.forEach((ing, index) => {
+                        if (index != (thisPizza.ingredients.length - 1)) {
+                            cardIngredients.innerHTML += `${ing.name[0].toUpperCase()}${ing.name.slice(1)}, `;
+                        } else {
+                            cardIngredients.innerHTML += `${ing.name[0].toUpperCase()}${ing.name.slice(1)}`;
+                        }
+                    })
+                    cardBody.append(cardCategory);
+                    cardBody.append(cardIngredients);
+                }
+                cardBody.append(cardPrice);
+                contItem.append(cardBody);
+                contentContainer.append(contItem);
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+    }
+</script>
