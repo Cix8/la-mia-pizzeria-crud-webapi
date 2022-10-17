@@ -42,6 +42,10 @@
                     pizzaList.forEach(item => {
                         const listItem = document.createElement("li");
                         listItem.setAttribute("class", "card my-3 me-3 my_card");
+                        const anchorTag = document.createElement("a");
+                        anchorTag.setAttribute("class", "text-decoration-none");
+                        anchorTag.setAttribute("href", `/Home/Details/${item.id}`);
+                        anchorTag.style.color = "inherit";
                         const cardImg = document.createElement("img");
                         if (item.image.includes("data:image") || item.image.includes("http")) {
                             cardImg.setAttribute("src", item.image);
@@ -55,13 +59,10 @@
                         cardTitle.setAttribute("class", "card-title");
                         const cardPrice = document.createElement("span");
                         cardPrice.setAttribute("class", "d-block pb-3");
-                        const anchorTag = document.createElement("a");
-                        anchorTag.setAttribute("class", "btn btn-primary");
-                        anchorTag.setAttribute("href", `/Home/Details/${item.id}`);
                         cardTitle.innerHTML += `Pizza ${item.name}`;
                         cardPrice.innerHTML += `Prezzo: € ${item.price}`;
-                        anchorTag.innerHTML += "Visualizza Pizza";
-                        listItem.append(cardImg);
+                        listItem.append(anchorTag);
+                        anchorTag.append(cardImg);
                         cardBody.append(cardTitle);
                         if (item.category && item.ingredients) {
                             const cardCategory = document.createElement("span");
@@ -81,8 +82,7 @@
                             cardBody.append(cardIngredients);
                         }
                         cardBody.append(cardPrice);
-                        cardBody.append(anchorTag);
-                        listItem.append(cardBody);
+                        anchorTag.append(cardBody);
                         list.append(listItem);
                     })
                     listContainer.append(list);
