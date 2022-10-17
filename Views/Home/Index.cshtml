@@ -4,69 +4,92 @@
 
 <h1 class="text-center py-4">Le nostre ApiPizze</h1>
 
+<div class="d-flex w-25 py-5 mx-auto">
+    <input id="search-input" class="form-control me-2" type="search" placeholder="Cerca una pizza (scrivi almeno 3 lettere)" aria-label="Search">
+</div>
+
 <div class="container-fluid" id="content-container">
 
 </div>
 
 <script type="text/javascript">
-    axios.get("/api/pizza/getalldata")
-        .then((resp) => {
-            console.log(resp.data);
-            const listContainer = document.getElementById("content-container")
-            if(resp.data.length != 0) {
-                const list = document.createElement("ul");
-                list.setAttribute("class", "list-group flex-row flex-wrap ms-5");
-                const pizzaList = resp.data;
-                pizzaList.forEach(item => {
-                    const listItem = document.createElement("li");
-                    listItem.setAttribute("class", "card my-3 me-3 my_card");
-                    const cardImg = document.createElement("img");
-                    if(item.image.includes("data:image") || item.image.includes("http")) {
-                        cardImg.setAttribute("src", item.image);
-                    } else {
-                        cardImg.setAttribute("src", `/img/${item.image}`);
-                    }
-                    cardImg.setAttribute("class", "card-img-top my_img_top");
-                    const cardBody = document.createElement("div");
-                    cardBody.setAttribute("class", "card-body");
-                    const cardTitle = document.createElement("h2");
-                    cardTitle.setAttribute("class", "card-title");
-                    const cardPrice = document.createElement("span");
-                    cardPrice.setAttribute("class", "d-block");
-                    cardTitle.innerHTML += `Pizza ${item.name}`;
-                    cardPrice.innerHTML += `Prezzo: € ${item.price}`;
-                    listItem.append(cardImg);
-                    cardBody.append(cardTitle);
-                    if(item.category && item.ingredients) {
-                        const cardCategory = document.createElement("span");
-                        cardCategory.setAttribute("class", "d-block pb-3");
-                        const cardIngredients = document.createElement("span");
-                        cardIngredients.setAttribute("class", "d-block pb-3");
-                        cardCategory.innerHTML += `Categoria: ${item.category.name}`;
-                        cardIngredients.innerHTML += "Ingredienti: ";
-                        item.ingredients.forEach((ing, index) => {
-                            if (index != (item.ingredients.length - 1)) {
-                                cardIngredients.innerHTML += `${ing.name[0].toUpperCase()}${ing.name.slice(1)}, `;
-                            } else {
-                                cardIngredients.innerHTML += `${ing.name[0].toUpperCase()}${ing.name.slice(1)}`;
-                            }
-                        })
-                        cardBody.append(cardCategory);
-                        cardBody.append(cardIngredients);
-                    }
-                    cardBody.append(cardPrice);
-                    listItem.append(cardBody);
-                    list.append(listItem);
-                })
-                listContainer.append(list);
-            } else {
-                const empty = document.createElement("h2");
-                empty.setAttribute("class", "text-center");
-                empty.innerHTML += "Non è disponibile nessuna pizza attualmente";
-                listContainer.append(empty);
+
+    callServer();
+
+    const searchInp = document.getElementById("search-input");
+    searchInp.addEventListener("keyup", function() {
+        if(this.value.length % 3 == 0) {
+            callServer(this.value);
+        } else if (this.value.length == 0) {
+            callServer();
+        }
+    });
+
+    function callServer(keyWord = "") {
+        axios.get("/api/pizza/get", {
+            params: {
+                keyWord: keyWord
             }
         })
-        .catch((e) => {
-            console.log(e);
-        })
+            .then((resp) => {
+                console.log(resp.data);
+                const listContainer = document.getElementById("content-container");
+                listContainer.innerHTML = "";
+                if (resp.data.length != 0) {
+                    const list = document.createElement("ul");
+                    list.setAttribute("class", "list-group flex-row flex-wrap ms-5");
+                    const pizzaList = resp.data;
+                    pizzaList.forEach(item => {
+                        const listItem = document.createElement("li");
+                        listItem.setAttribute("class", "card my-3 me-3 my_card");
+                        const cardImg = document.createElement("img");
+                        if (item.image.includes("data:image") || item.image.includes("http")) {
+                            cardImg.setAttribute("src", item.image);
+                        } else {
+                            cardImg.setAttribute("src", `/img/${item.image}`);
+                        }
+                        cardImg.setAttribute("class", "card-img-top my_img_top");
+                        const cardBody = document.createElement("div");
+                        cardBody.setAttribute("class", "card-body");
+                        const cardTitle = document.createElement("h2");
+                        cardTitle.setAttribute("class", "card-title");
+                        const cardPrice = document.createElement("span");
+                        cardPrice.setAttribute("class", "d-block");
+                        cardTitle.innerHTML += `Pizza ${item.name}`;
+                        cardPrice.innerHTML += `Prezzo: € ${item.price}`;
+                        listItem.append(cardImg);
+                        cardBody.append(cardTitle);
+                        if (item.category && item.ingredients) {
+                            const cardCategory = document.createElement("span");
+                            cardCategory.setAttribute("class", "d-block pb-3");
+                            const cardIngredients = document.createElement("span");
+                            cardIngredients.setAttribute("class", "d-block pb-3");
+                            cardCategory.innerHTML += `Categoria: ${item.category.name}`;
+                            cardIngredients.innerHTML += "Ingredienti: ";
+                            item.ingredients.forEach((ing, index) => {
+                                if (index != (item.ingredients.length - 1)) {
+                                    cardIngredients.innerHTML += `${ing.name[0].toUpperCase()}${ing.name.slice(1)}, `;
+                                } else {
+                                    cardIngredients.innerHTML += `${ing.name[0].toUpperCase()}${ing.name.slice(1)}`;
+                                }
+                            })
+                            cardBody.append(cardCategory);
+                            cardBody.append(cardIngredients);
+                        }
+                        cardBody.append(cardPrice);
+                        listItem.append(cardBody);
+                        list.append(listItem);
+                    })
+                    listContainer.append(list);
+                } else {
+                    const empty = document.createElement("h2");
+                    empty.setAttribute("class", "text-center");
+                    empty.innerHTML += "Non è disponibile nessuna pizza attualmente";
+                    listContainer.append(empty);
+                }
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+    }
 </script>

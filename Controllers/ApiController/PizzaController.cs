@@ -18,29 +18,17 @@ namespace la_mia_pizzeria_static.Controllers.ApiController
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string? keyWord)
         {
-            List<PizzaModel> pizzaList = _pizzeria_db.Pizzas.ToList();
+            List<PizzaModel> pizzaList = new List<PizzaModel>();
+            if (keyWord != null)
+            {
+                pizzaList = _pizzeria_db.Pizzas.Where(pizza => pizza.Name.Contains(keyWord)).Include("Category").Include("Ingredients").ToList();
+            } else
+            {
+                pizzaList = _pizzeria_db.Pizzas.Include("Category").Include("Ingredients").ToList();
+            }
             //List<PizzaModel> pizzaList = new List<PizzaModel>();
-            return Ok(pizzaList);
-        }
-
-        [HttpGet]
-        public IActionResult GetAllData()
-        {
-            List<PizzaModel> pizzaList;
-            using (Pizzeria ctx = new Pizzeria())
-            {
-                pizzaList = ctx.Pizzas.ToList();
-            }
-            foreach(PizzaModel pizza in pizzaList)
-            {
-                using (Pizzeria ctx = new Pizzeria())
-                {
-                    pizza.Category = ctx.Categories.Where(x => x.Id == pizza.CategoryId).FirstOrDefault();
-                    pizza.Ingredients = ctx.Ingredients.FromSqlRaw($"SELECT i.Id, i.Name FROM Ingredients as i INNER JOIN IngredientModelPizzaModel as ingp ON i.Id = ingp.IngredientsId INNER JOIN Pizzas as p ON ingp.PizzasId = p.Id WHERE p.Id = {pizza.Id}").ToList();
-                }
-            }
             return Ok(pizzaList);
         }
     }
