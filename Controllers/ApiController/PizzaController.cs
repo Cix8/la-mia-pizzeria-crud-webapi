@@ -34,7 +34,7 @@ namespace la_mia_pizzeria_static.Controllers.ApiController
 
 
         [HttpGet]
-        public IActionResult Details(int id)
+        public IActionResult GetDetails(int id)
         {
             PizzaModel thisPizza = _pizzeria_db.Pizzas.Where(pizza => pizza.Id == id).Include("Category").Include("Ingredients").First();
             return Ok(thisPizza);

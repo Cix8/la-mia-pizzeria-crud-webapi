@@ -10,7 +10,6 @@
 
 <script type="text/javascript">
 
-    debugger;
     const currentUrl = window.location.href;
     const urlArray = currentUrl.split("/");
     const thisId = urlArray[urlArray.length - 1];
@@ -18,7 +17,7 @@
     callServer(thisId);
 
     function callServer(id) {
-        axios.get("/api/pizza/details", {
+        axios.get("/api/pizza/getdetails", {
             params: {
                 id: id
             }
