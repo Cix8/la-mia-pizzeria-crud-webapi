@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "ApiMessages";
+}
+
+<h1 class="text-center py-4">Contattaci</h1>
+
+<form id="message-form">
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" required>
+        <div id="emailHelp" class="form-text">Non condivideremo con nessun altro la tua email</div>
+    </div>
+    <div class="mb-3">
+        <label for="name" class="form-label">Nome</label>
+        <input type="text" class="form-control" id="name" required>
+    </div>
+    <div class="mb-3">
+        <label for="title" class="form-label">Titolo</label>
+        <input type="text" class="form-control" id="title" aria-describedby="titleHelp" required>
+        <div id="titleHelp" class="form-text">Inserisci il titolo del tuo messaggio</div>
+    </div>
+    <div class="mb-3">
+        <label for="content">Messaggio</label>
+        <textarea class="form-control" id="content" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary mb-3">Submit</button>
+</form>
+
+<script type="text/javascript">
+
+    const form = document.getElementById("message-form");
+    const email = document.getElementById("email");
+    const title = document.getElementById("title");
+    const name = document.getElementById("name");
+    const content = document.getElementById("content");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        send(email, title, name, content);
+    })
+
+    function send(email, title, name, content) {
+        axios.post("/api/message/send", {
+            email: email.value,
+            title: title.value,
+            name: name.value,
+            content: content.value
+        })
+        .then((resp) => {
+            console.log(resp);
+
+            email.value = "";
+            title.value = "";
+            name.value = "";
+            content.value = "";
+
+            alert("Messaggio inviato");
+        })
+        .catch((e) => {
+            console.log(e);
+        })
+    }
+
+</script>
