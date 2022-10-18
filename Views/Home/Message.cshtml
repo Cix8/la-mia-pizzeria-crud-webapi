@@ -4,6 +4,14 @@
 
 <h1 class="text-center py-4">Contattaci</h1>
 
+<div id="success" class="d-none my_pointer alert alert-success">
+
+</div>
+
+<ul id="errors" class="d-none list-group my_pointer">
+
+</ul>
+
 <form id="message-form">
     <div class="mb-3">
         <label for="email" class="form-label">Email</label>
@@ -33,33 +41,58 @@
     const title = document.getElementById("title");
     const name = document.getElementById("name");
     const content = document.getElementById("content");
+    const errorList = document.getElementById("errors");
+    const successCont = document.getElementById("success");
+    const formObj = {email: email, title: title, name: name, content: content};
 
     form.addEventListener("submit", function(event) {
         event.preventDefault();
         
-        send(email, title, name, content);
+        send(formObj, successCont, errorList);
     })
 
-    function send(email, title, name, content) {
+    function send(obj, successContainer, errorsContainer) {
         axios.post("/api/message/send", {
-            email: email.value,
-            title: title.value,
-            name: name.value,
-            content: content.value
+            email: obj.email.value,
+            title: obj.title.value,
+            name: obj.name.value,
+            content: obj.content.value
         })
         .then((resp) => {
-            console.log(resp);
 
-            email.value = "";
-            title.value = "";
-            name.value = "";
-            content.value = "";
+            resetValue(obj.email);
+            resetValue(obj.title);
+            resetValue(obj.name);
+            resetValue(obj.content);
 
-            alert("Messaggio inviato");
+            errorsContainer.innerHTML = "";
+            successContainer.innerHTML = "";
+            const successMessage = document.createElement("h3");
+            successMessage.innerHTML = "Messaggio inviato correttamente";
+            successContainer.append(successMessage);
+            successContainer.classList.remove("d-none");
+            successContainer.addEventListener("click", function () {
+                successContainer.classList.add("d-none");
+            })
         })
         .catch((e) => {
-            console.log(e);
+            errorsContainer.innerHTML = "";
+            const errorsResp = e.response.data.errors;
+            for (const prop in errorsResp) {
+                const errorItem = document.createElement("li");
+                errorItem.setAttribute("class", "alert alert-danger");
+                errorItem.innerHTML = errorsResp[prop];
+                errorsContainer.append(errorItem);
+            }
+            errorsContainer.classList.remove("d-none");
+            errorsContainer.addEventListener("click", function () {
+                errorsContainer.classList.add("d-none");
+            })
         })
+    }
+
+    function resetValue(tag) {
+        tag.value = "";
     }
 
 </script>

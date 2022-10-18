@@ -24,3 +24,11 @@ body {
 .my_img_top {
     height: 15rem !important;
 }
+
+.my_pointer {
+    cursor: pointer !important;
+}
+
+#errors {
+    list-style: none !important;
+}
