@@ -4,7 +4,7 @@
 
 <h1 class="text-center py-4">Contattaci</h1>
 
-<div id="success" class="d-none my_pointer alert alert-success">
+<div id="success" class="d-none my_pointer alert alert-success text-center">
 
 </div>
 
@@ -66,13 +66,15 @@
             resetValue(obj.content);
 
             errorsContainer.innerHTML = "";
+            errorsContainer.classList.add("d-none");
             successContainer.innerHTML = "";
-            const successMessage = document.createElement("h3");
+            const successMessage = document.createElement("h5");
             successMessage.innerHTML = "Messaggio inviato correttamente";
             successContainer.append(successMessage);
             successContainer.classList.remove("d-none");
             successContainer.addEventListener("click", function () {
                 successContainer.classList.add("d-none");
+                successContainer.innerHTML = "";
             })
         })
         .catch((e) => {
