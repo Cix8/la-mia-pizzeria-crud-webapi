@@ -40,5 +40,17 @@ namespace la_mia_pizzeria_static.Controllers.ApiController
             return Ok(thisPizza);
             //return NotFound();
         }
+
+
+        [HttpGet("{id}")]
+        public IActionResult GetEditForm(int id)
+        {
+            PizzaCategories formData = new PizzaCategories();
+            formData.Pizza = _pizzeria_db.Pizzas.Where(p => p.Id == id).Include("Ingredients").First();
+            formData.Categories = _pizzeria_db.Categories.ToList();
+            formData.Ingredients = _pizzeria_db.Ingredients.ToList();
+
+            return Ok(formData);
+        }
     }
 }

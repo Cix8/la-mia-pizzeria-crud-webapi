@@ -1,0 +1,90 @@
+﻿@{
+    ViewData["Title"] = "ApiEdit";
+}
+
+<h1 id="title" class="text-center py-4">Modifica Pizza </h1>
+
+<form>
+    <div class="form-check mb-3">
+        <label for="name" class="form-label">Nome:</label>
+        <input type="text" class="form-control" id="name" placeholder="Inserisci il nome della pizza">
+    </div>
+    <div class="form-check mb-3">
+        <label for="description">Descrizione:</label>
+        <textarea class="form-control" rows="10" id="description"></textarea>
+    </div>
+    <div class="form-check mb-3">
+        <label for="image" class="form-label">Immagine:</label>
+        <input type="text" class="form-control" id="image" placeholder="Inserisci il percorso dell'immagine">
+    </div>
+    <div class="form-check mb-3">
+        <label for="price" class="form-label">Prezzo:</label>
+        <input type="text" class="form-control" id="price" placeholder="Inserisci il prezzo">
+    </div>
+    <div class="form-check mb-3">
+        <span class="form-label">Categoria:</span>
+        <select id="categories" class="form-select" aria-label="Default select example">
+            <option value="">Seleziona una categoria...</option>
+        </select>
+    </div>
+    <div class="form-check mb-3">
+        <span class="form-label">Ingredienti:</span>
+        <select id="ingredients" class="form-select" multiple>
+        </select>
+    </div>
+    <div class="form-check mb-3">
+        <button type="submit" class="btn btn-primary">Salva</button>
+    </div>
+</form>
+
+
+
+<script type="text/javascript">
+
+    const currentUrl = window.location.href;
+    const urlArray = currentUrl.split("/");
+    const thisId = urlArray[urlArray.length - 1];
+
+    const title = document.getElementById("title");
+    const nameTag = document.getElementById("name");
+    const descTag = document.getElementById("description");
+    const imgTag = document.getElementById("image");
+    const priceTag = document.getElementById("price");
+    const categoriesTag = document.getElementById("categories");
+    const ingredientsTag = document.getElementById("ingredients");
+
+    axios.get("/api/pizza/geteditform/" + thisId)
+        .then((resp) => {
+            console.log(resp.data);
+            const data = resp.data;
+            const categories = data.categories;
+            const ingredients = data.ingredients;
+            const pizza = data.pizza;
+            console.log(categories, ingredients, pizza);
+
+            title.innerHTML += pizza.name;
+            nameTag.value = pizza.name;
+            descTag.value = pizza.description;
+            imgTag.value = pizza.image;
+            priceTag.value = pizza.price;
+
+            categories.forEach(cat => {
+                const option = document.createElement("option");
+                option.value = cat.id;
+                option.innerHTML = cat.name;
+                cat.id === pizza.categoryId ? option.setAttribute("selected", "selected") : "";
+                categoriesTag.append(option);
+            })
+
+            ingredients.forEach(ing => {
+                const option = document.createElement("option");
+                option.value = ing.id;
+                option.innerHTML = ing.name;
+                pizza.ingredients.forEach(pizzaIng => {
+                    pizzaIng.id === ing.id ? option.setAttribute("selected", "selected") : "";
+                })
+                ingredientsTag.append(option);
+            })
+        })
+
+</script>

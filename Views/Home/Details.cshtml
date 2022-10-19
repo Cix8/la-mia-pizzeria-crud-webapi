@@ -43,9 +43,13 @@
                 const cardTitle = document.createElement("h2");
                 cardTitle.setAttribute("class", "card-title");
                 const cardPrice = document.createElement("span");
-                cardPrice.setAttribute("class", "d-block");
+                cardPrice.setAttribute("class", "d-block pb-3");
+                const editBtn = document.createElement("a");
+                editBtn.setAttribute("class", "btn btn-primary");
+                editBtn.setAttribute("href", `/Home/Edit/${thisPizza.id}`);
                 cardTitle.innerHTML += `Pizza ${thisPizza.name}`;
                 cardPrice.innerHTML += `Prezzo: € ${thisPizza.price}`;
+                editBtn.innerHTML += "Modifica pizza";
                 contItem.append(cardImg);
                 cardBody.append(cardTitle);
                 if (thisPizza.category && thisPizza.ingredients) {
@@ -66,6 +70,7 @@
                     cardBody.append(cardIngredients);
                 }
                 cardBody.append(cardPrice);
+                cardBody.append(editBtn);
                 contItem.append(cardBody);
                 contentContainer.append(contItem);
             })
