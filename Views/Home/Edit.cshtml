@@ -56,13 +56,13 @@
     let categoriesArray = [];
     let ingredientsArray = [];
 
+    getPizza();
+
     form.addEventListener("submit", function(event) {
         event.preventDefault();
 
         putPizza();
     })
-
-    getPizza();
 
     function getPizza() {
         axios.get("/api/pizza/geteditform/" + thisId)
