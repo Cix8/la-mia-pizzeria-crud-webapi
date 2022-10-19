@@ -69,5 +69,18 @@ namespace la_mia_pizzeria_static.Controllers.ApiController
             _pizzeria_db.SaveChanges();
             return Ok();
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            PizzaModel searchResult = _pizzeria_db.Pizzas.Where(p => p.Id == id).FirstOrDefault();
+            if(searchResult == null)
+            {
+                return NotFound();
+            }
+            _pizzeria_db.Pizzas.Remove(searchResult);
+            _pizzeria_db.SaveChanges();
+            return Ok();
+        }
     }
 }
