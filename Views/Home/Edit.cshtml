@@ -4,7 +4,7 @@
 
 <h1 id="title" class="text-center py-4">Modifica Pizza </h1>
 
-<form>
+<form id="edit-form">
     <div class="form-check mb-3">
         <label for="name" class="form-label">Nome:</label>
         <input type="text" class="form-control" id="name" placeholder="Inserisci il nome della pizza">
@@ -52,39 +52,98 @@
     const priceTag = document.getElementById("price");
     const categoriesTag = document.getElementById("categories");
     const ingredientsTag = document.getElementById("ingredients");
+    const form = document.getElementById("edit-form");
+    let categoriesArray = [];
+    let ingredientsArray = [];
 
-    axios.get("/api/pizza/geteditform/" + thisId)
-        .then((resp) => {
-            console.log(resp.data);
-            const data = resp.data;
-            const categories = data.categories;
-            const ingredients = data.ingredients;
-            const pizza = data.pizza;
-            console.log(categories, ingredients, pizza);
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
 
-            title.innerHTML += pizza.name;
-            nameTag.value = pizza.name;
-            descTag.value = pizza.description;
-            imgTag.value = pizza.image;
-            priceTag.value = pizza.price;
+        putPizza();
+    })
 
-            categories.forEach(cat => {
-                const option = document.createElement("option");
-                option.value = cat.id;
-                option.innerHTML = cat.name;
-                cat.id === pizza.categoryId ? option.setAttribute("selected", "selected") : "";
-                categoriesTag.append(option);
-            })
+    getPizza();
 
-            ingredients.forEach(ing => {
-                const option = document.createElement("option");
-                option.value = ing.id;
-                option.innerHTML = ing.name;
-                pizza.ingredients.forEach(pizzaIng => {
-                    pizzaIng.id === ing.id ? option.setAttribute("selected", "selected") : "";
+    function getPizza() {
+        axios.get("/api/pizza/geteditform/" + thisId)
+            .then((resp) => {
+                const data = resp.data;
+                const categories = data.categories;
+                const ingredients = data.ingredients;
+                const pizza = data.pizza;
+                console.log(pizza);
+
+                title.innerHTML += pizza.name;
+                nameTag.value = pizza.name;
+                descTag.value = pizza.description;
+                imgTag.value = pizza.image;
+                priceTag.value = pizza.price;
+
+                ingredientsArray = ingredients;
+                categoriesArray = categories;
+
+                categories.forEach(cat => {
+                    const option = document.createElement("option");
+                    option.value = cat.id;
+                    option.innerHTML = cat.name;
+                    cat.id === pizza.categoryId ? option.setAttribute("selected", "selected") : "";
+                    categoriesTag.append(option);
                 })
-                ingredientsTag.append(option);
+
+                ingredients.forEach(ing => {
+                    const option = document.createElement("option");
+                    option.value = ing.id;
+                    option.innerHTML = ing.name;
+                    pizza.ingredients.forEach(pizzaIng => {
+                        pizzaIng.id === ing.id ? option.setAttribute("selected", "selected") : "";
+                    })
+                    ingredientsTag.append(option);
+                })
             })
+            .catch(e => {
+                console.log(e);
+            });
+    }
+
+    function putPizza() {
+        const name = nameTag.value;
+        const description = descTag.value;
+        const image = imgTag.value;
+        const price = parseFloat(priceTag.value);
+        const categoryId = parseInt(categoriesTag.value);
+        const ingredientsId = [];
+        for(const opt of ingredientsTag.options) {
+            if(opt.selected) {
+                ingredientsId.push(parseInt(opt.value));
+            }
+        }
+        const selectedIng = [];
+        ingredientsArray.forEach(ing => {
+            ingredientsId.includes(ing.id) ? selectedIng.push(ing) : "";
         })
+        console.log(selectedIng);
+        console.log(name, description, image, price, categoryId);
+        axios.put("/api/pizza/put/" + thisId, {
+            name: name,
+            description: description,
+            image: image,
+            price: price,
+            categoryId: categoryId,
+            ingredients: selectedIng,
+        })
+            .then(resp => {
+                console.log(resp);
+
+                alert("Pizza modificata con successo");
+
+                window.location.href = `/Home/Details/${thisId}`;
+            })
+            .catch(e => {
+                console.log(e);
+
+                alert("Qualcosa è andato storto");
+            })
+    }
+
 
 </script>

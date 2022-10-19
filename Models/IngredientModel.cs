@@ -10,7 +10,7 @@ namespace la_mia_pizzeria_static.Models
 
         public IngredientModel()
         {
-
+            Pizzas = new List<PizzaModel>();
         }
     }
 }

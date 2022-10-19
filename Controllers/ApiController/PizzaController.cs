@@ -41,7 +41,6 @@ namespace la_mia_pizzeria_static.Controllers.ApiController
             //return NotFound();
         }
 
-
         [HttpGet("{id}")]
         public IActionResult GetEditForm(int id)
         {
@@ -51,6 +50,24 @@ namespace la_mia_pizzeria_static.Controllers.ApiController
             formData.Ingredients = _pizzeria_db.Ingredients.ToList();
 
             return Ok(formData);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] PizzaModel pizza)
+        {
+            PizzaModel searchResult = _pizzeria_db.Pizzas.Where(p => p.Id == id).Include("Ingredients").FirstOrDefault();
+            if (searchResult == null)
+            {
+                return NotFound();
+            }
+            searchResult.Name = pizza.Name;
+            searchResult.Description = pizza.Description;
+            searchResult.Image = pizza.Image;
+            searchResult.Price = pizza.Price;
+            searchResult.CategoryId = pizza.CategoryId;
+            searchResult.Ingredients = _pizzeria_db.Ingredients.Where(ing => pizza.Ingredients.Contains(ing)).ToList();
+            _pizzeria_db.SaveChanges();
+            return Ok();
         }
     }
 }
